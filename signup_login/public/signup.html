@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="box">
+    <h1>Sign Up</h1>
+
+    <!-- No "required" on the inputs on purpose, so empty fields
+         reach the backend and we can see its 400 error message. -->
+    <form id="signupForm">
+      <label for="email">Email</label>
+      <input type="email" id="email">
+
+      <label for="username">Username</label>
+      <input type="text" id="username">
+
+      <label for="password">Password</label>
+      <input type="password" id="password">
+
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <p id="message"></p>
+
+    <p class="switch">Already have an account? <a href="login.html">Log in</a></p>
+  </div>
+
+  <script>
+    const form = document.getElementById("signupForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault(); // stop the page from reloading
+
+      // get what the user typed
+      const email = document.getElementById("email").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // send it to the backend using POST (data goes in the body)
+      const response = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, username, password })
+      });
+
+      const data = await response.json();
+
+      if (response.status === 201) {
+        // success -> save the username and go to the homepage
+        localStorage.setItem("username", data.user.username);
+        window.location.href = "home.html";
+      } else {
+        // 400 or 409 -> show the error message
+        message.textContent = data.message + " (Status " + response.status + ")";
+        message.className = "error";
+      }
+    });
+  </script>
+</body>
+</html>

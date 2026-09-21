@@ -1,0 +1,12 @@
+{
+  "name": "rest-api-activity",
+  "version": "1.0.0",
+  "description": "Simple signup and login system using Express.js (POST only)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

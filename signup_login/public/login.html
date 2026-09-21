@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="box">
+    <h1>Log In</h1>
+
+    <!-- No "required" on the inputs on purpose, so empty fields
+         reach the backend and we can see its 400 error message. -->
+    <form id="loginForm">
+      <label for="username">Username</label>
+      <input type="text" id="username">
+
+      <label for="password">Password</label>
+      <input type="password" id="password">
+
+      <button type="submit">Log In</button>
+    </form>
+
+    <p id="message"></p>
+
+    <p class="switch">No account yet? <a href="signup.html">Sign up</a></p>
+  </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault(); // stop the page from reloading
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // username and password go in the request body (not in the URL)
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        // success -> save the username and go to the homepage
+        localStorage.setItem("username", data.user.username);
+        window.location.href = "home.html";
+      } else {
+        // 400 or 401 -> show the error message
+        message.textContent = data.message + " (Status " + response.status + ")";
+        message.className = "error";
+      }
+    });
+  </script>
+</body>
+</html>
