@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Users</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 700px; margin: 3rem auto; padding: 0 1rem; }
+    .user { border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; border-radius: 6px; }
+    a { margin-right: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Registered Users</h1>
+  <div id="users">Loading...</div>
+
+  <p>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/about-me.html">About Me</a>
+  </p>
+
+  <script>
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      window.location.href = "/index.html";
+    }
+
+    async function loadUsers() {
+      const res = await fetch("/api/users", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!res.ok) {
+        localStorage.removeItem("token");
+        window.location.href = "/index.html";
+        return;
+      }
+
+      const users = await res.json();
+      const container = document.getElementById("users");
+
+      container.innerHTML = users.map(user => `
+        <div class="user">
+          <p><strong>Username:</strong> ${user.username}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>Bio:</strong> ${user.bio || "No bio provided."}</p>
+        </div>
+      `).join("");
+    }
+
+    loadUsers();
+  </script>
+</body>
+</html>

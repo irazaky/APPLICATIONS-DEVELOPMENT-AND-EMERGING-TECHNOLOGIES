@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About Me</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 500px; margin: 3rem auto; padding: 0 1rem; }
+    a { margin-right: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>About Me</h1>
+  <p><strong>Username:</strong> <span id="username"></span></p>
+  <p><strong>Email:</strong> <span id="email"></span></p>
+  <p><strong>Bio:</strong> <span id="bio"></span></p>
+
+  <p>
+    <a href="/dashboard.html">Dashboard</a>
+    <a href="/users.html">Users</a>
+  </p>
+
+  <script>
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      window.location.href = "/index.html";
+    }
+
+    async function loadAboutMe() {
+      const res = await fetch("/api/users/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (!res.ok) {
+        localStorage.removeItem("token");
+        window.location.href = "/index.html";
+        return;
+      }
+
+      const user = await res.json();
+
+      document.getElementById("username").textContent = user.username;
+      document.getElementById("email").textContent = user.email;
+      document.getElementById("bio").textContent = user.bio || "No bio provided.";
+    }
+
+    loadAboutMe();
+  </script>
+</body>
+</html>
