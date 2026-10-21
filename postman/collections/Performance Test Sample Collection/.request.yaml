@@ -1,0 +1,10 @@
+$kind: http-request
+name: ""
+url: http://localhost:4000/login
+method: POST
+body:
+  type: json
+  content: '{ "username": "ann", "password": "pw123" }'
+auth:
+  type: noauth
+order: 1000
